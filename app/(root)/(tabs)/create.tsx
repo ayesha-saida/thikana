@@ -201,6 +201,16 @@ export default function CreatePropertyScreen() {
 
     setSubmitting(true);
 
+    const {
+      data: { user },
+    } = await authSupabase.auth.getUser();
+
+    if (!user) {
+      setSubmitting(false);
+      Alert.alert("Sign in required", "Please sign in to create a property.");
+      return;
+    }
+
     const { error } = await authSupabase.from("properties").insert({
       title: form.title.trim(),
       description: form.description.trim(),
@@ -216,13 +226,21 @@ export default function CreatePropertyScreen() {
       images: form.images,
       is_featured: form.isFeatured,
       is_sold: false,
+      created_by: user.id,
     });
 
     setSubmitting(false);
 
     if (error) {
-      Alert.alert("Error", "Failed to create property. Please try again.");
-      console.error(error);
+      console.error("Create property failed:", error.message, error.code);
+      if (error.code === "42703") {
+        Alert.alert(
+          "Setup required",
+          "Run supabase-migration-properties-created-by.sql in the Supabase SQL Editor.",
+        );
+      } else {
+        Alert.alert("Error", `Failed to create property: ${error.message}`);
+      }
       return;
     }
 

@@ -20,6 +20,7 @@ export default function ProfileScreen() {
   const [userName, setUserName] = useState("User");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -35,7 +36,7 @@ export default function ProfileScreen() {
 
     const { data } = await supabase
       .from("users")
-      .select("first_name, last_name, avatar_url")
+      .select("first_name, last_name, avatar_url, is_admin")
       .eq("clerk_id", user.id)
       .maybeSingle();
 
@@ -43,6 +44,7 @@ export default function ProfileScreen() {
       const name = [data.first_name, data.last_name].filter(Boolean).join(" ");
       if (name) setUserName(name);
       if (data.avatar_url) setAvatarUrl(data.avatar_url);
+      setIsAdmin(!!data.is_admin);
     }
   };
 
@@ -183,6 +185,14 @@ export default function ProfileScreen() {
           </Text>
           <Ionicons name="chevron-forward" size={18} color="#D1D5DB" />
         </TouchableOpacity>
+
+        {isAdmin && (
+          <MenuItem
+            icon="business-outline"
+            label="My Listings"
+            onPress={() => router.push("/(root)/my-listings")}
+          />
+        )}
 
         <MenuItem
           icon="notifications-outline"
