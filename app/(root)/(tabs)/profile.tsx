@@ -203,12 +203,6 @@ export default function ProfileScreen() {
         />
 
         <MenuItem
-          icon="settings-outline"
-          label="Settings"
-          onPress={() => Alert.alert("Coming Soon", "Settings coming soon!")}
-        />
-      
-        <MenuItem
           icon="help-circle-outline"
           label="Help & Support"
           onPress={() =>

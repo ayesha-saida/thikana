@@ -83,7 +83,7 @@ export default function CreatePropertyScreen() {
     if (!permission.granted) {
       Alert.alert(
         "Permission Required",
-        "Please allow access to your photo library."
+        "Please allow access to your photo library.",
       );
       return;
     }
@@ -155,7 +155,7 @@ export default function CreatePropertyScreen() {
       if (status !== "granted") {
         Alert.alert(
           "Permission Denied",
-          "Location permission is required to detect coordinates."
+          "Location permission is required to detect coordinates.",
         );
         return;
       }
@@ -189,7 +189,7 @@ export default function CreatePropertyScreen() {
     if (priceNum > MAX_PRICE)
       return Alert.alert(
         "Validation",
-        `Price cannot exceed ₹${MAX_PRICE.toLocaleString("en-IN")}.`
+        `Price cannot exceed ₹${MAX_PRICE.toLocaleString("en-IN")}.`,
       );
 
     if (!form.address.trim())
@@ -398,7 +398,7 @@ export default function CreatePropertyScreen() {
             <Text className={labelClass}>Title</Text>
             <TextInput
               className={inputClass}
-              placeholder="e.g. Modern 3BHK in Bandra"
+              placeholder="e.g. Modern 3BHK in Banani"
               placeholderTextColor="#9CA3AF"
               value={form.title}
               onChangeText={(v) => updateForm({ title: v })}
@@ -502,7 +502,7 @@ export default function CreatePropertyScreen() {
             <Text className={labelClass}>City</Text>
             <TextInput
               className={inputClass}
-              placeholder="e.g. Mumbai"
+              placeholder="e.g. Dhaka"
               placeholderTextColor="#9CA3AF"
               value={form.city}
               onChangeText={(v) => updateForm({ city: v })}
