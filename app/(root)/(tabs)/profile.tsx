@@ -195,14 +195,6 @@ export default function ProfileScreen() {
         )}
 
         <MenuItem
-          icon="notifications-outline"
-          label="Notifications"
-          onPress={() =>
-            Alert.alert("Coming Soon", "Notifications coming soon!")
-          }
-        />
-
-        <MenuItem
           icon="help-circle-outline"
           label="Help & Support"
           onPress={() =>

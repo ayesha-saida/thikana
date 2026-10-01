@@ -21,12 +21,40 @@ export default function HomeScreen() {
   const [featured, setFeatured] = useState<Property[]>([]);
   const [recommended, setRecommended] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState("User");
 
   useFocusEffect(
     useCallback(() => {
       fetchProperties();
+      loadUserName();
     }, []),
   );
+
+  const loadUserName = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Fast path: name stored on the auth user at sign-up
+    const metaName = [user.user_metadata?.firstName, user.user_metadata?.lastName]
+      .filter(Boolean)
+      .join(" ");
+    if (metaName) {
+      setUserName(metaName);
+      return;
+    }
+
+    // Fallback: name from the users table
+    const { data } = await supabase
+      .from("users")
+      .select("first_name, last_name")
+      .eq("clerk_id", user.id)
+      .maybeSingle();
+
+    const name = [data?.first_name, data?.last_name].filter(Boolean).join(" ");
+    if (name) setUserName(name);
+  };
 
   const fetchProperties = async () => {
     setLoading(true);
@@ -65,9 +93,9 @@ export default function HomeScreen() {
                 resizeMode="contain"
               />
               <View className="items-end">
-                <Text className="text-gray-500 text-xs">Good morning 👋</Text>
+                <Text className="text-gray-500 text-xs">Welcome 👋</Text>
                 <Text className="text-gray-900 text-base font-bold">
-                  User
+                  {userName}
                 </Text>
               </View>
             </View>

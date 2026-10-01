@@ -245,7 +245,7 @@ export default function CreatePropertyScreen() {
     }
 
     setForm(INITIAL_FORM);
-    Alert.alert("Success! 🎉", "Property listed successfully.", [
+    Alert.alert("Success 🎉", "New Property added", [
       { text: "OK", onPress: () => router.replace("/(root)/(tabs)") },
     ]);
   };
