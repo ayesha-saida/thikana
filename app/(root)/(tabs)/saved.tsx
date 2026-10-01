@@ -42,7 +42,7 @@ export default function SavedScreen() {
       const { data } = await authSupabase
         .from("saved_properties")
         .select("id, property_id, properties(*)")
-        .eq("user_clerk_id", user.id)
+        .eq("user_id", user.id)
         .order("id", { ascending: false });
 
       setSaved((data as unknown as SavedProperty[]) ?? []);

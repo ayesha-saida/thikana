@@ -1,8 +1,10 @@
 import { supabase } from "@/lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Linking,
@@ -15,12 +17,34 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function ProfileScreen() {
   const router = useRouter();
   const [userEmail, setUserEmail] = useState("");
+  const [userName, setUserName] = useState("User");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user?.email) setUserEmail(data.user.email);
-    });
+    loadProfile();
   }, []);
+
+  const loadProfile = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
+    setUserEmail(user.email ?? "");
+
+    const { data } = await supabase
+      .from("users")
+      .select("first_name, last_name, avatar_url")
+      .eq("clerk_id", user.id)
+      .maybeSingle();
+
+    if (data) {
+      const name = [data.first_name, data.last_name].filter(Boolean).join(" ");
+      if (name) setUserName(name);
+      if (data.avatar_url) setAvatarUrl(data.avatar_url);
+    }
+  };
 
   const handleSignOut = async () => {
     try {
@@ -32,7 +56,83 @@ export default function ProfileScreen() {
   };
 
   const handleUpdateProfileImage = async () => {
-    Alert.alert("Coming Soon", "Profile image update coming soon!");
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(
+        "Permission Required",
+        "Allow photo library access to change your photo.",
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: "images",
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+      base64: true,
+    });
+
+    if (result.canceled) return;
+
+    setUploading(true);
+    try {
+      const asset = result.assets[0];
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not signed in");
+
+      // Use ImagePicker's mimeType; fall back to guessing from URI extension
+      const uriExt = (
+        asset.uri.split("?")[0].split(".").pop() || ""
+      ).toLowerCase();
+      const ext = ["png", "jpg", "jpeg", "webp"].includes(uriExt)
+        ? uriExt
+        : "jpg";
+      const contentType =
+        asset.mimeType && asset.mimeType.startsWith("image/")
+          ? asset.mimeType
+          : ext === "png"
+            ? "image/png"
+            : ext === "webp"
+              ? "image/webp"
+              : "image/jpeg";
+      const path = `${user.id}/avatar_${Date.now()}.${ext}`;
+
+      const base64 = asset.base64!;
+      const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(path, bytes, { contentType, upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(path);
+
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ avatar_url: urlData.publicUrl })
+        .eq("clerk_id", user.id);
+      if (updateError) throw updateError;
+
+      setAvatarUrl(urlData.publicUrl);
+      Alert.alert("Success", "Profile photo updated!");
+    } catch (err: any) {
+      console.error("Avatar upload failed:", err?.message);
+      if (String(err?.message).includes("Bucket not found")) {
+        Alert.alert(
+          "Setup required",
+          'Storage bucket "avatars" is missing. Run supabase-migration-avatars.sql in the Supabase SQL Editor.',
+        );
+      } else {
+        Alert.alert("Error", err?.message ?? "Failed to update photo.");
+      }
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -41,17 +141,31 @@ export default function ProfileScreen() {
       <View className="items-center py-8">
         <View className="relative">
           <Image
-            source={require("../../../assets/images/thikana.png")}
-            style={{ width: 48, height: 48, marginBottom: 16 }}
+            source={
+              avatarUrl
+                ? { uri: avatarUrl }
+                : require("../../../assets/images/thikana.png")
+            }
+            style={{
+              width: 96,
+              height: 96,
+              borderRadius: 48,
+              marginBottom: 16,
+            }}
           />
           <TouchableOpacity
             onPress={handleUpdateProfileImage}
+            disabled={uploading}
             className="absolute bottom-3 right-0 bg-blue-600 rounded-full p-2"
           >
-            <Ionicons name="camera" size={16} color="white" />
+            {uploading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Ionicons name="camera" size={16} color="white" />
+            )}
           </TouchableOpacity>
         </View>
-        <Text className="text-xl font-bold text-gray-800">User</Text>
+        <Text className="text-xl font-bold text-gray-800">{userName}</Text>
         {userEmail ? (
           <Text className="text-gray-500 mt-1">{userEmail}</Text>
         ) : null}
@@ -83,7 +197,7 @@ export default function ProfileScreen() {
           label="Settings"
           onPress={() => Alert.alert("Coming Soon", "Settings coming soon!")}
         />
-
+      
         <MenuItem
           icon="help-circle-outline"
           label="Help & Support"
