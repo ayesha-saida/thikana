@@ -153,7 +153,7 @@ export default function SignUpScreen() {
     >
       <View className="flex-1 justify-center items-center bg-white px-6">
         <Image
-          source={require("../../assets/images/thikana.png")}
+          source={require("../../assets/images/thikana.jpg")}
           className="w-36 h-16 mb-8"
           resizeMode="contain"
         />

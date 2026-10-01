@@ -4,7 +4,7 @@
     "slug": "real-estate-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/thikana.png",
+    "icon": "./assets/images/thikana.jpg",
     "scheme": "realestateapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -15,9 +15,9 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/thikana.png",
-        "backgroundImage": "./assets/images/thikana.png",
-        "monochromeImage": "./assets/images/thikana.png"
+        "foregroundImage": "./assets/images/thikana.jpg",
+        "backgroundImage": "./assets/images/thikana.jpg",
+        "monochromeImage": "./assets/images/thikana.jpg"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -28,7 +28,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "/assets/images/thikana.png"
+      "favicon": "/assets/images/thikana.jpg"
     },
     "plugins": [
       "expo-router",

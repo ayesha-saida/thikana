@@ -146,7 +146,7 @@ export default function ProfileScreen() {
             source={
               avatarUrl
                 ? { uri: avatarUrl }
-                : require("../../../assets/images/thikana.png")
+                : require("../../../assets/images/thikana.jpg")
             }
             style={{
               width: 96,

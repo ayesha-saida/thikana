@@ -37,7 +37,10 @@ export default function HomeScreen() {
     if (!user) return;
 
     // Fast path: name stored on the auth user at sign-up
-    const metaName = [user.user_metadata?.firstName, user.user_metadata?.lastName]
+    const metaName = [
+      user.user_metadata?.firstName,
+      user.user_metadata?.lastName,
+    ]
       .filter(Boolean)
       .join(" ");
     if (metaName) {
@@ -88,7 +91,7 @@ export default function HomeScreen() {
             {/* Header */}
             <View className="flex-row items-center justify-between px-5 pt-4 pb-5">
               <Image
-                source={require("../../../assets/images/images.png")}
+                source={require("../../../assets/images/thikana.jpg")}
                 style={{ width: 90, height: 36 }}
                 resizeMode="contain"
               />
