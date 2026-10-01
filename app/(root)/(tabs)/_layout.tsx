@@ -1,7 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+import { Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabsLayout() {
+  const insets = useSafeAreaInsets();
+
+  // Android: lift the tab bar above the system gesture/navigation bar so the
+  // buttons sit higher and are easy to tap. Web reports inset 0, so its
+  // layout stays exactly as it was.
+  const bottomPad =
+    Platform.OS === "android" ? Math.max(insets.bottom, 14) : insets.bottom;
+
   return (
     <Tabs
       screenOptions={{
@@ -11,9 +21,9 @@ export default function TabsLayout() {
         tabBarStyle: {
           backgroundColor: "#FFFFFF",
           borderTopColor: "#E5E7EB",
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 6,
+          height: 60 + bottomPad,
+          paddingBottom: 8 + bottomPad,
+          paddingTop: Platform.OS === "android" ? 4 : 6,
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
       }}

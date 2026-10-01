@@ -1,14 +1,14 @@
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-} from "react-native";
+import { PropertyType, useFilterStore } from "@/store/filterStore";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { useFilterStore, PropertyType } from "@/store/filterStore";
+import {
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const TYPES: { label: string; value: PropertyType }[] = [
   { label: "All", value: null },
@@ -27,10 +27,10 @@ const BEDS = [
 ];
 
 const PRICE_PRESETS = [
-  { label: "Under ₹50L", min: null, max: 5000000 },
-  { label: "₹50L – ₹1Cr", min: 5000000, max: 10000000 },
-  { label: "₹1Cr – ₹2Cr", min: 10000000, max: 20000000 },
-  { label: "Above ₹2Cr", min: 20000000, max: null },
+  { label: "Under ৳50L", min: null, max: 5000000 },
+  { label: "৳50L – ৳1Cr", min: 5000000, max: 10000000 },
+  { label: "৳1Cr – ৳2Cr", min: 10000000, max: 20000000 },
+  { label: "Above ৳2Cr", min: 20000000, max: null },
 ];
 
 const chip = (active: boolean) =>
@@ -64,7 +64,7 @@ export default function FilterModal({
   const [localMax, setLocalMax] = useState(maxPrice ? String(maxPrice) : "");
 
   const activeCount = [type, bedrooms, minPrice, maxPrice].filter(
-    (v) => v !== null
+    (v) => v !== null,
   ).length;
 
   const handleApply = () => {
@@ -160,7 +160,7 @@ export default function FilterModal({
 
           {/* Price Range */}
           <Text className="text-base font-bold text-gray-800 mb-3">
-            Price Range (₹)
+            Price Range (৳)
           </Text>
           <View className="flex-row gap-3 mb-3">
             {[
@@ -185,7 +185,7 @@ export default function FilterModal({
                   className="flex-row items-center bg-white rounded-2xl px-3 border border-gray-200"
                   style={shadow}
                 >
-                  <Text className="text-gray-400 text-sm mr-1">₹</Text>
+                  <Text className="text-gray-400 text-sm mr-1">৳</Text>
                   <TextInput
                     className="flex-1 py-3 text-gray-800"
                     placeholder={placeholder}
