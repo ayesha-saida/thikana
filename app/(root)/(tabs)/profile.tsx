@@ -194,6 +194,14 @@ export default function ProfileScreen() {
           />
         )}
 
+        {isAdmin && (
+          <MenuItem
+            icon="people-outline"
+            label="Manage Users"
+            onPress={() => router.push("/(root)/manage-users")}
+          />
+        )}
+
         <MenuItem
           icon="help-circle-outline"
           label="Help & Support"

@@ -9,15 +9,19 @@ export default function PropertyCard({
   property,
   onUnsave,
   showSave = false,
+  onEdit,
+  onDelete,
 }: {
   property: Property;
   onUnsave?: () => void;
   showSave?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }) {
   const router = useRouter();
   const { isSaved, saveLoading, toggleSave } = useSavedProperty(
     property.id,
-    onUnsave
+    onUnsave,
   );
 
   return (
@@ -30,7 +34,6 @@ export default function PropertyCard({
         shadowOpacity: 0.06,
         shadowRadius: 8,
         elevation: 3,
-        opacity: property.is_sold ? 0.5 : 1,
       }}
     >
       {/* Image */}
@@ -61,11 +64,7 @@ export default function PropertyCard({
           <Text className="text-blue-600 font-bold text-sm">
             {formatPrice(property.price)}
           </Text>
-          {property.is_sold && (
-            <View className="bg-red-50 px-2 py-0.5 rounded-full">
-              <Text className="text-red-500 text-xs font-semibold">Sold</Text>
-            </View>
-          )}
+
           <View className="flex-row gap-3">
             <View className="flex-row items-center gap-1">
               <Ionicons name="bed-outline" size={11} color="#6B7280" />
@@ -83,19 +82,41 @@ export default function PropertyCard({
         </View>
       </View>
 
-      {/* Save Button */}
-      {showSave && (
-        <TouchableOpacity
-          onPress={toggleSave}
-          disabled={saveLoading}
-          className="w-10 items-center pt-3"
-        >
-          <Ionicons
-            name={isSaved ? "heart" : "heart-outline"}
-            size={18}
-            color={isSaved ? "#EF4444" : "#9CA3AF"}
-          />
-        </TouchableOpacity>
+      {/* Save / Edit / Delete Buttons */}
+      {(showSave || onEdit || onDelete) && (
+        <View className="w-10 items-center pt-3">
+          {showSave && (
+            <TouchableOpacity
+              onPress={toggleSave}
+              disabled={saveLoading}
+              className="items-center"
+            >
+              <Ionicons
+                name={isSaved ? "heart" : "heart-outline"}
+                size={18}
+                color={isSaved ? "#EF4444" : "#9CA3AF"}
+              />
+            </TouchableOpacity>
+          )}
+          {onEdit && (
+            <TouchableOpacity
+              onPress={onEdit}
+              className={showSave ? "mt-3" : ""}
+              hitSlop={8}
+            >
+              <Ionicons name="create-outline" size={18} color="#2563EB" />
+            </TouchableOpacity>
+          )}
+          {onDelete && (
+            <TouchableOpacity
+              onPress={onDelete}
+              className={showSave || onEdit ? "mt-3" : ""}
+              hitSlop={8}
+            >
+              <Ionicons name="trash-outline" size={18} color="#EF4444" />
+            </TouchableOpacity>
+          )}
+        </View>
       )}
     </TouchableOpacity>
   );

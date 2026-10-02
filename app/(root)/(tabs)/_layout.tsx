@@ -1,14 +1,45 @@
+import { supabase } from "@/lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { Platform } from "react-native";
+import { useEffect, useState } from "react";
+import { AppState, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
 
-  // Android: lift the tab bar above the system gesture/navigation bar so the
-  // buttons sit higher and are easy to tap. Web reports inset 0, so its
-  // layout stays exactly as it was.
+  // Only admins see the "Add Property" tab.
+  // Starts false so non-admins never see it flash on launch.
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const loadAdmin = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
+
+    const { data } = await supabase
+      .from("users")
+      .select("is_admin")
+      .eq("clerk_id", user.id)
+      .maybeSingle();
+
+    setIsAdmin(!!data?.is_admin);
+  };
+
+  useEffect(() => {
+    loadAdmin();
+
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") loadAdmin();
+    });
+    return () => sub?.remove();
+  }, []);
+
   const bottomPad =
     Platform.OS === "android" ? Math.max(insets.bottom, 14) : insets.bottom;
 
@@ -37,6 +68,7 @@ export default function TabsLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="search"
         options={{
@@ -46,15 +78,19 @@ export default function TabsLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="create"
         options={{
           title: "Add Property",
+          // Hidden from the tab bar for non-admins
+          href: isAdmin ? undefined : null,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="add-circle" size={size} color={color} />
           ),
         }}
       />
+
       <Tabs.Screen
         name="saved"
         options={{
@@ -64,6 +100,7 @@ export default function TabsLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="profile"
         options={{

@@ -70,12 +70,14 @@ export function useSavedProperty(propertyId: string, onUnsave?: () => void) {
       if (error) {
         console.error("Save failed:", error.message, error.details);
         if (error.code === "23503") {
-          Alert.alert(
-            "Setup required",
-            "Your user record is missing. Run supabase-migration-users-trigger.sql in the Supabase SQL Editor.",
-          );
+          // foreign key violation
+          Alert.alert("Setup required", "Your user record is missing.");
         } else if (error.code === "42501") {
-          Alert.alert("Permission denied", "RLS blocked this save. Check your Supabase policies.");
+          // insufficient-privilege/permission issue
+          Alert.alert(
+            "Permission denied",
+            "RLS blocked this save. Check your Supabase policies.",
+          );
         } else {
           Alert.alert("Error", `Could not save: ${error.message}`);
         }

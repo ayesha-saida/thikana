@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase";
-import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
@@ -32,7 +31,6 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
-  const [showVerifySent, setShowVerifySent] = useState(false);
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
@@ -90,15 +88,11 @@ export default function SignUpScreen() {
       }
 
       if (data.session) {
-        // Email confirmation is off — we're signed in already, go straight in
         router.replace("/(root)/(tabs)");
         return;
       }
 
-      // Email confirmation is on — tell the user to verify first
-      if (data.user) {
-        setShowVerifySent(true);
-      }
+      Alert.alert("Account created");
     } catch {
       Alert.alert("Error", "Sign up failed. Please try again.");
     } finally {
@@ -110,37 +104,6 @@ export default function SignUpScreen() {
     return (
       <View className="flex-1 justify-center items-center bg-white px-6">
         <ActivityIndicator size="large" color="#2563EB" />
-      </View>
-    );
-  }
-
-  if (showVerifySent) {
-    return (
-      <View className="flex-1 justify-center items-center bg-white px-6">
-        <View className="w-20 h-20 bg-blue-50 rounded-full items-center justify-center mb-5">
-          <Ionicons name="mail-outline" size={40} color="#2563EB" />
-        </View>
-        <Text className="text-2xl font-bold text-gray-800 mb-2">
-          Check your email
-        </Text>
-        <Text className="text-gray-500 text-center mb-8">
-          We sent a confirmation link to{" "}
-          <Text className="font-semibold text-gray-700">{email.trim()}</Text>.
-          Confirm your account, then sign in.
-        </Text>
-
-        <TouchableOpacity
-          onPress={() => router.replace("/sign-in")}
-          className="w-full bg-blue-600 py-4 rounded-xl items-center mb-4"
-        >
-          <Text className="text-white font-bold text-base">
-            I have confirmed — Sign In
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => setShowVerifySent(false)}>
-          <Text className="text-blue-600 font-semibold">Back to Sign Up</Text>
-        </TouchableOpacity>
       </View>
     );
   }

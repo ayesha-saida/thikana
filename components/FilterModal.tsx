@@ -27,8 +27,8 @@ const BEDS = [
 ];
 
 const PRICE_PRESETS = [
-  { label: "Under ৳50L", min: null, max: 5000000 },
-  { label: "৳50L – ৳1Cr", min: 5000000, max: 10000000 },
+  { label: "Under ৳90K", min: null, max: 90000 },
+  { label: "৳1L – ৳1Cr", min: 100000, max: 10000000 },
   { label: "৳1Cr – ৳2Cr", min: 10000000, max: 20000000 },
   { label: "Above ৳2Cr", min: 20000000, max: null },
 ];

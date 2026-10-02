@@ -42,10 +42,7 @@ export default function MyListingsScreen() {
     if (error) {
       console.error("Error fetching my listings:", error.message, error.code);
       if (error.code === "42703") {
-        Alert.alert(
-          "Setup required",
-          "Run supabase-migration-properties-created-by.sql in the Supabase SQL Editor.",
-        );
+        Alert.alert("Setup required");
       }
       setProperties([]);
     } else {
@@ -60,6 +57,50 @@ export default function MyListingsScreen() {
       fetchListings();
     }, [fetchListings]),
   );
+
+  const confirmDelete = (item: Property) => {
+    Alert.alert(
+      "Delete listing?",
+      `"${item.title}" will be permanently removed.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => applyDelete(item),
+        },
+      ],
+    );
+  };
+
+  const applyDelete = async (item: Property) => {
+    const { data, error } = await authSupabase
+      .from("properties")
+      .delete()
+      .eq("id", item.id)
+      .select("id");
+
+    if (error) {
+      console.error("Delete property failed:", error.message, error.code);
+      if (error.code === "42501") {
+        Alert.alert("Setup required");
+      } else {
+        Alert.alert("Error", `Failed to delete listing: ${error.message}`);
+      }
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      Alert.alert(
+        "Not deleted",
+        "You may not have permission to delete this listing.",
+      );
+      return;
+    }
+
+    setProperties((prev) => prev.filter((p) => p.id !== item.id));
+    Alert.alert("Deleted", "Listing removed.");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -92,7 +133,18 @@ export default function MyListingsScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => <PropertyCard property={item} />}
+          renderItem={({ item }) => (
+            <PropertyCard
+              property={item}
+              onEdit={() =>
+                router.push({
+                  pathname: "/(root)/edit-listing",
+                  params: { id: item.id },
+                })
+              }
+              onDelete={() => confirmDelete(item)}
+            />
+          )}
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center py-24">
               <View className="w-20 h-20 bg-blue-50 rounded-full items-center justify-center mb-4">

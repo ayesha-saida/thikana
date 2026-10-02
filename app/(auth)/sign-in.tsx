@@ -13,6 +13,7 @@ import {
 } from "react-native";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MIN_PASSWORD_LENGTH = 6;
 
 interface FormErrors {
   email?: string;
@@ -36,6 +37,8 @@ export default function SignInScreen() {
 
     if (!password) {
       newErrors.password = "Password is required";
+    } else if (password.length < MIN_PASSWORD_LENGTH) {
+      newErrors.password = `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
     }
 
     setErrors(newErrors);

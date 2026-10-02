@@ -7,5 +7,5 @@ export const formatPrice = (value: number): string => {
     const l = (value / 100000).toFixed(1).replace(/\.0$/, "");
     return `৳${l}L`;
   }
-  return `৳${value.toLocaleString()}`;
+  return `৳${value.toLocaleString("en-In")}`;
 };

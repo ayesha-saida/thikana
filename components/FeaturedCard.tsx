@@ -1,8 +1,8 @@
+import { formatPrice } from "@/lib/utils";
+import { Property } from "@/types";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Property } from "@/types";
-import { formatPrice } from "@/lib/utils";
 
 export default function FeaturedCard({ property }: { property: Property }) {
   const router = useRouter();
@@ -17,7 +17,6 @@ export default function FeaturedCard({ property }: { property: Property }) {
         shadowOpacity: 0.08,
         shadowRadius: 12,
         elevation: 4,
-        opacity: property.is_sold ? 0.5 : 1,
       }}
     >
       {/* Image */}
@@ -33,12 +32,6 @@ export default function FeaturedCard({ property }: { property: Property }) {
           {property.type}
         </Text>
       </View>
-
-      {property.is_sold && (
-        <View className="absolute top-3 right-3 bg-red-500 px-3 py-1 rounded-full">
-          <Text className="text-xs font-semibold text-white">Sold</Text>
-        </View>
-      )}
 
       {/* Info */}
       <View className="p-4">
