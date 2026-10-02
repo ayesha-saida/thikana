@@ -96,7 +96,7 @@ export default function PropertyDetailScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Image Carousel */}
         <View>
-          <View style={{ opacity: property.is_sold ? 0.5 : 1 }}>
+          <View>
             <FlatList
               data={property.images}
               keyExtractor={(_, i) => i.toString()}
@@ -165,10 +165,7 @@ export default function PropertyDetailScreen() {
         </View>
 
         {/* Content */}
-        <View
-          className="px-5 pt-5 pb-8"
-          style={{ opacity: property.is_sold ? 0.6 : 1 }}
-        >
+        <View className="px-5 pt-5 pb-8">
           {/* Badges */}
           <View className="flex-row gap-2 mb-3 flex-wrap">
             <View className="bg-blue-50 px-3 py-1 rounded-full">
@@ -181,11 +178,6 @@ export default function PropertyDetailScreen() {
                 <Text className="text-amber-600 text-xs font-semibold">
                   ⭐ Featured
                 </Text>
-              </View>
-            )}
-            {property.is_sold && (
-              <View className="bg-red-50 px-3 py-1 rounded-full">
-                <Text className="text-red-500 text-xs font-semibold">Sold</Text>
               </View>
             )}
           </View>

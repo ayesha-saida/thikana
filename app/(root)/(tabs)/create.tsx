@@ -61,17 +61,13 @@ export default function CreatePropertyScreen() {
       longitude: values.longitude ? Number(values.longitude) : null,
       images: values.images,
       is_featured: values.isFeatured,
-      is_sold: false,
       created_by: user.id,
     });
 
     if (error) {
       console.error("Create property failed:", error.message, error.code);
       if (error.code === "42703") {
-        Alert.alert(
-          "Setup required",
-          "Run supabase-migration-properties-created-by.sql in the Supabase SQL Editor.",
-        );
+        Alert.alert("Setup required");
       } else if (error.message.includes("Only admins")) {
         Alert.alert("Admins only", "Only admins can add properties.");
       } else {

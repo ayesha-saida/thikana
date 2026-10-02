@@ -207,7 +207,7 @@ export default function ProfileScreen() {
           label="Help & Support"
           onPress={() =>
             Linking.openURL(
-              "mailto:storyofanavocado@gmail.com?subject=Help & Support - thikana App",
+              "mailto:example@gmail.com?subject=Help & Support - thikana App",
             )
           }
         />
